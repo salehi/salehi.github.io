@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Not found">
+  <section class="wrap nf">
+    <p class="mono code">404</p>
+    <h1>No route to host.</h1>
+    <p class="muted">The page you asked for doesn’t exist, or it moved.</p>
+    <a class="btn primary" href="/">Back home</a>
+  </section>
+</Base>
+<style>
+  .nf { min-height: 60vh; display: grid; place-content: center; justify-items: start; gap: 14px; padding-block: 80px; }
+  .code { color: var(--accent); font-size: 14px; }
+  h1 { font-size: clamp(32px, 5vw, 52px); letter-spacing: -0.03em; }
+</style>

@@ -1,0 +1,21 @@
+---
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="wrap row">
+    <p class="mono">© {year} salehi</p>
+    <ul>
+      <li><a href={site.links.github}>GitHub</a></li>
+      <li><a href={site.links.linkedin}>LinkedIn</a></li>
+      <li><a href={site.links.dockerhub}>Docker Hub</a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+    </ul>
+  </div>
+</footer>
+<style>
+  .ftr { border-top: 1px solid var(--line); padding-block: 28px; font-size: 13.5px; color: var(--faint); }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  ul { display: flex; gap: 18px; flex-wrap: wrap; }
+  a:hover { color: var(--text); }
+</style>

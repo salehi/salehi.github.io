@@ -1,0 +1,79 @@
+---
+// Deterministic network mesh: nodes, nearest-neighbour links, and a few
+// "packets" travelling along links. Pure SVG + CSS, no runtime JS.
+const W = 560, H = 460;
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+const nodes: { x: number; y: number }[] = [];
+let guard = 0;
+while (nodes.length < 30 && guard++ < 5000) {
+  const x = 30 + rnd() * (W - 60);
+  const y = 30 + rnd() * (H - 60);
+  if (nodes.every((n) => Math.hypot(n.x - x, n.y - y) > 62)) nodes.push({ x, y });
+}
+
+const key = (a: number, b: number) => (a < b ? `${a}-${b}` : `${b}-${a}`);
+const edges = new Map<string, [number, number]>();
+nodes.forEach((n, i) => {
+  nodes
+    .map((m, j) => ({ j, d: Math.hypot(m.x - n.x, m.y - n.y) }))
+    .filter((o) => o.j !== i)
+    .sort((a, b) => a.d - b.d)
+    .slice(0, 3)
+    .forEach(({ j, d }) => { if (d < 150) edges.set(key(i, j), [i, j]); });
+});
+const links = [...edges.values()];
+const probes = new Set([2, 9, 15, 22, 27].filter((i) => i < nodes.length));
+const packets = links.filter((_, i) => i % 4 === 1).slice(0, 12);
+const f = (v: number) => v.toFixed(1);
+---
+<svg class="mesh" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Network mesh illustration">
+  <g class="links">
+    {links.map(([a, b]) => (
+      <line x1={f(nodes[a].x)} y1={f(nodes[a].y)} x2={f(nodes[b].x)} y2={f(nodes[b].y)} />
+    ))}
+  </g>
+  <g class="packets">
+    {packets.map(([a, b], i) => (
+      <line
+        x1={f(nodes[a].x)} y1={f(nodes[a].y)} x2={f(nodes[b].x)} y2={f(nodes[b].y)}
+        pathLength="100"
+        style={`animation-delay:${(-i * 0.73).toFixed(2)}s;animation-duration:${(2.6 + (i % 4) * 0.55).toFixed(2)}s`}
+      />
+    ))}
+  </g>
+  <g class="nodes">
+    {nodes.map((n, i) => probes.has(i) ? (
+      <g class="probe" style={`animation-delay:${(-i * 0.4).toFixed(1)}s`}>
+        <circle class="ring" cx={f(n.x)} cy={f(n.y)} r="12" />
+        <circle class="core" cx={f(n.x)} cy={f(n.y)} r="4.5" />
+      </g>
+    ) : (
+      <circle cx={f(n.x)} cy={f(n.y)} r="3" />
+    ))}
+  </g>
+</svg>
+
+<style>
+  .mesh { width: 100%; height: auto; overflow: visible; }
+  .links line { stroke: var(--line-strong); stroke-width: 1; }
+  .packets line {
+    stroke: var(--accent); stroke-width: 2; stroke-linecap: round;
+    stroke-dasharray: 7 93; stroke-dashoffset: 100;
+    animation: travel linear infinite;
+  }
+  @keyframes travel { to { stroke-dashoffset: 0; } }
+  .nodes > circle { fill: var(--bg); stroke: var(--faint); stroke-width: 1.4; }
+  .probe .core { fill: var(--accent); }
+  .probe .ring {
+    fill: none; stroke: var(--accent); stroke-width: 1.2; opacity: 0;
+    transform-box: fill-box; transform-origin: center;
+    animation: ping 3.2s ease-out infinite; animation-delay: inherit;
+  }
+  @keyframes ping { 0% { opacity: .7; transform: scale(.35); } 80%, 100% { opacity: 0; transform: scale(1.6); } }
+  @media (prefers-reduced-motion: reduce) {
+    .packets line { stroke-dasharray: none; opacity: .35; }
+    .probe .ring { opacity: .35; }
+  }
+</style>

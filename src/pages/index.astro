@@ -1,0 +1,185 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Mesh from '../components/Mesh.astro';
+import RepoCard from '../components/RepoCard.astro';
+import { site } from '../data/site';
+import { cv } from '../data/cv';
+import { favorites } from '../data/favorites';
+import { getRepos } from '../lib/github';
+
+const repos = await getRepos();
+const byName = new Map(repos.map((r) => [r.name, r]));
+const favs = favorites.filter((f) => byName.has(f.repo));
+const featured = favs.slice(0, 6);
+const originals = repos.filter((r) => !r.fork && r.name !== 'salehi.github.io').length;
+
+const posts = (await getCollection('writing', (p) => !p.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const stats = [
+  { v: '10+', k: 'years in production' },
+  { v: String(cv.experience.length), k: 'companies' },
+  { v: String(originals), k: 'public projects' },
+];
+---
+<Base>
+  <section class="hero">
+    <div class="wrap grid">
+      <div class="copy">
+        <p class="eyebrow"><b>~/</b>salehi</p>
+        <h1>Principal Engineer.</h1>
+        <p class="focus mono">devops <i>·</i> sre <i>·</i> backend <i>·</i> networking</p>
+        <p class="lead">{cv.summary}</p>
+        <div class="cta">
+          <a class="btn primary" href="/projects/">View projects</a>
+          <a class="btn" href="/cv/">Résumé</a>
+          <a class="btn" href={`mailto:${site.email}`}>Email</a>
+        </div>
+        <dl class="stats">
+          {stats.map((s) => (<div><dt class="mono">{s.v}</dt><dd>{s.k}</dd></div>))}
+        </dl>
+      </div>
+      <div class="art" aria-hidden="true"><Mesh /></div>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><b>01</b> / favorites</p>
+        <div class="row">
+          <h2>Favorite projects</h2>
+          <a class="link mono small" href="/projects/">All {favs.length} favorites &amp; every repo →</a>
+        </div>
+      </div>
+      <div class="cards">
+        {featured.map((f) => (
+          <RepoCard repo={byName.get(f.repo)!} description={f.description} live={f.live} docker={f.docker} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><b>02</b> / capabilities</p>
+        <h2>What I work with</h2>
+      </div>
+      <div class="caps">
+        {cv.capabilities.map((c) => (
+          <div class="cap">
+            <h3 class="mono">{c.area}</h3>
+            <ul>{c.items.map((i) => <li>{i}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow"><b>03</b> / experience</p>
+        <div class="row">
+          <h2>Where I’ve worked</h2>
+          <a class="link mono small" href="/cv/">Full résumé →</a>
+        </div>
+      </div>
+      <ol class="xp">
+        {cv.experience.map((e) => (
+          <li>
+            <span class="co">{e.company}</span>
+            <span class="role">{e.role}</span>
+            <span class="when mono">{e.period}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  {posts.length > 0 && (
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow"><b>04</b> / writing</p>
+          <div class="row"><h2>Notes &amp; write-ups</h2><a class="link mono small" href="/writing/">All posts →</a></div>
+        </div>
+        <ul class="posts">
+          {posts.map((p) => (
+            <li><a href={`/writing/${p.id}/`}><span>{p.data.title}</span><time class="mono" datetime={p.data.date.toISOString()}>{p.data.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}</time></a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  <section class="section contact" id="contact">
+    <div class="wrap">
+      <p class="eyebrow"><b>{posts.length > 0 ? '05' : '04'}</b> / contact</p>
+      <h2>Get in touch</h2>
+      <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
+      <div class="cta">
+        <a class="btn" href={site.links.linkedin}>LinkedIn</a>
+        <a class="btn" href={site.links.github}>GitHub</a>
+        <a class="btn" href={site.cvPdf}>Download CV (PDF)</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding-block: 56px 72px; position: relative; overflow: hidden; }
+  .hero::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000 10%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000 10%, transparent 75%);
+    opacity: .55;
+  }
+  .grid { position: relative; display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 960px) { .hero { padding-block: 96px 112px; } .grid { grid-template-columns: 1.1fr 0.9fr; gap: 56px; } }
+  .copy { display: grid; gap: 22px; }
+  h1 { font-size: clamp(38px, 6.4vw, 68px); font-weight: 680; letter-spacing: -0.035em; line-height: 1.02; max-width: 16ch; }
+  .focus { font-size: clamp(14px, 1.5vw, 16px); color: var(--accent); letter-spacing: .02em; margin-top: -8px; }
+  .focus i { font-style: normal; color: var(--faint); }
+  .lead { font-size: clamp(16.5px, 1.6vw, 19px); color: var(--muted); max-width: 54ch; line-height: 1.6; }
+  .cta { display: flex; flex-wrap: wrap; gap: 10px; }
+  .stats { display: flex; gap: 32px; margin: 10px 0 0; padding-top: 22px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .stats div { display: grid; gap: 2px; }
+  .stats dt { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; }
+  .stats dd { margin: 0; font-size: 13px; color: var(--faint); }
+  .art { max-width: 520px; width: 100%; justify-self: center; }
+  @media (max-width: 959px) { .art { max-width: 420px; opacity: .9; } }
+
+  .small { font-size: 13px; }
+  .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+
+  .caps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--line); gap: 1px; }
+  .cap { background: var(--bg); padding: 24px; display: grid; gap: 12px; align-content: start; }
+  .cap h3 { font-size: 13px; font-weight: 500; color: var(--accent); letter-spacing: 0.02em; }
+  .cap ul { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); font-size: 14.5px; }
+
+  .xp { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .xp li { display: grid; grid-template-columns: 1fr auto; gap: 2px 24px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+  .co { font-weight: 600; }
+  .role { color: var(--muted); grid-column: 1; }
+  .when { color: var(--faint); font-size: 13px; grid-column: 2; grid-row: 1 / span 2; align-self: center; text-align: right; }
+  @media (min-width: 720px) {
+    .xp li { grid-template-columns: 220px 1fr auto; align-items: baseline; }
+    .role { grid-column: 2; } .when { grid-column: 3; grid-row: 1; }
+  }
+
+  .posts { border-top: 1px solid var(--line); }
+  .posts a { display: flex; justify-content: space-between; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .posts a:hover span { color: var(--accent); }
+  .posts time { color: var(--faint); font-size: 13px; white-space: nowrap; }
+
+  .contact .wrap { display: grid; gap: 18px; justify-items: start; }
+  .contact h2 { font-size: clamp(30px, 4.4vw, 48px); }
+  .mail { font-size: clamp(20px, 3.4vw, 34px); font-weight: 600; letter-spacing: -0.02em; color: var(--accent); word-break: break-all; }
+  .mail:hover { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
+</style>
