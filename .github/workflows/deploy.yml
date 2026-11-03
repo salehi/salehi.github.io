@@ -3,8 +3,6 @@ name: Deploy site
 on:
   push:
     branches: [master]
-  schedule:
-    - cron: '17 3 * * 1' # weekly: refresh repo data from the GitHub API
   workflow_dispatch:
 
 permissions:

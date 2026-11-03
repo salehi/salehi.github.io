@@ -26,4 +26,4 @@ make og        # regenerate public/og.png
 
 The repository list comes from the GitHub API at build time, with
 `src/data/repos.snapshot.json` as an offline fallback. Pushing to `master`
-deploys through GitHub Actions, and a weekly run refreshes the repo data.
+deploys through GitHub Actions (or run it manually from the Actions tab).
