@@ -23,7 +23,7 @@ body{width:1280px;height:300px;background:${t.bg};color:${t.text};font-family:I;
 h1{font-size:64px;letter-spacing:-.035em;font-weight:680;margin-top:44px;position:relative;line-height:1}
 p{font-family:M;color:${t.accent};font-size:21px;margin-top:22px;position:relative}p i{font-style:normal;color:${t.muted}}
 </style></head><body><div class="g"></div><div class="l">salehi<span>_</span></div><h1>Principal Engineer.</h1>
-<p>devops <i>·</i> sre <i>·</i> backend <i>·</i> networking</p></body></html>`;
+<p>ai <i>·</i> devops <i>·</i> sre <i>·</i> backend <i>·</i> networking</p></body></html>`;
   const page = await browser.newPage({ viewport: { width: 1280, height: 300 }, deviceScaleFactor: 2 });
   await page.setContent(html, { waitUntil: 'load' });
   await page.evaluate(() => document.fonts.ready);

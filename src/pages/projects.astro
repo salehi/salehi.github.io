@@ -2,9 +2,9 @@
 import Base from '../layouts/Base.astro';
 import RepoCard from '../components/RepoCard.astro';
 import { favorites } from '../data/favorites';
-import { getRepos } from '../lib/github';
+import { getRepos, META_REPOS } from '../lib/github';
 
-const repos = (await getRepos()).filter((r) => r.name !== 'salehi.github.io');
+const repos = (await getRepos()).filter((r) => !META_REPOS.has(r.name));
 const byName = new Map(repos.map((r) => [r.name, r]));
 const favs = favorites.filter((f) => byName.has(f.repo));
 const favSet = new Set(favs.map((f) => f.repo));

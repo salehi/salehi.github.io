@@ -1,5 +1,8 @@
 import snapshot from '../data/repos.snapshot.json';
 
+/** Repos that are infrastructure for the profile itself, not projects. */
+export const META_REPOS = new Set(['salehi.github.io', 'salehi']);
+
 export type Repo = {
   name: string;
   description: string | null;

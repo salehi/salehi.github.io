@@ -1,9 +1,9 @@
 export const site = {
   handle: 'salehi',
-  role: 'Principal Engineer — DevOps, SRE, backend & networking',
+  role: 'Principal Engineer — AI, DevOps, SRE, backend & networking',
   url: 'https://salehi.github.io',
   description:
-    'salehi — Principal Engineer across DevOps, SRE, backend and networking. 10+ years building and operating production infrastructure across Linux, networking, containers, CI/CD and observability.',
+    'salehi — Principal Engineer across AI, DevOps, SRE, backend and networking. 10+ years building and operating production infrastructure across Linux, networking, containers, CI/CD and observability.',
   email: 'salehi1994@gmail.com',
   links: {
     github: 'https://github.com/salehi',

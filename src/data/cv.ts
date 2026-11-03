@@ -2,7 +2,7 @@
 // The phone number is intentionally left out of the public site and PDF.
 export const cv = {
   name: 'Muhammad Salehi',
-  title: 'Principal Engineer — DevOps, SRE, backend & networking',
+  title: 'Principal Engineer — AI, DevOps, SRE, backend & networking',
   summary:
     '10+ years building and operating production infrastructure across Linux, networking, containers, CI/CD, observability, backend systems and distributed network tooling.',
   location: 'Istanbul, Türkiye',

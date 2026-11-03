@@ -6,13 +6,13 @@ import RepoCard from '../components/RepoCard.astro';
 import { site } from '../data/site';
 import { cv } from '../data/cv';
 import { favorites } from '../data/favorites';
-import { getRepos } from '../lib/github';
+import { getRepos, META_REPOS } from '../lib/github';
 
 const repos = await getRepos();
 const byName = new Map(repos.map((r) => [r.name, r]));
 const favs = favorites.filter((f) => byName.has(f.repo));
 const featured = favs.slice(0, 6);
-const originals = repos.filter((r) => !r.fork && r.name !== 'salehi.github.io').length;
+const originals = repos.filter((r) => !r.fork && !META_REPOS.has(r.name)).length;
 
 const posts = (await getCollection('writing', (p) => !p.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -30,7 +30,7 @@ const stats = [
       <div class="copy">
         <p class="eyebrow"><b>~/</b>salehi</p>
         <h1>Principal Engineer.</h1>
-        <p class="focus mono">devops <i>·</i> sre <i>·</i> backend <i>·</i> networking</p>
+        <p class="focus mono">ai <i>·</i> devops <i>·</i> sre <i>·</i> backend <i>·</i> networking</p>
         <p class="lead">{cv.summary}</p>
         <div class="cta">
           <a class="btn primary" href="/projects/">View projects</a>
@@ -62,27 +62,11 @@ const stats = [
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow"><b>02</b> / capabilities</p>
-        <h2>What I work with</h2>
-      </div>
-      <div class="caps">
-        {cv.capabilities.map((c) => (
-          <div class="cap">
-            <h3 class="mono">{c.area}</h3>
-            <ul>{c.items.map((i) => <li>{i}</li>)}</ul>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
 
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow"><b>03</b> / experience</p>
+        <p class="eyebrow"><b>02</b> / experience</p>
         <div class="row">
           <h2>Where I’ve worked</h2>
           <a class="link mono small" href="/cv/">Full résumé →</a>
@@ -104,7 +88,7 @@ const stats = [
     <section class="section">
       <div class="wrap">
         <div class="section-head">
-          <p class="eyebrow"><b>04</b> / writing</p>
+          <p class="eyebrow"><b>03</b> / writing</p>
           <div class="row"><h2>Notes &amp; write-ups</h2><a class="link mono small" href="/writing/">All posts →</a></div>
         </div>
         <ul class="posts">
@@ -118,7 +102,7 @@ const stats = [
 
   <section class="section contact" id="contact">
     <div class="wrap">
-      <p class="eyebrow"><b>{posts.length > 0 ? '05' : '04'}</b> / contact</p>
+      <p class="eyebrow"><b>{posts.length > 0 ? '04' : '03'}</b> / contact</p>
       <h2>Get in touch</h2>
       <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
       <div class="cta">
@@ -158,10 +142,6 @@ const stats = [
   .small { font-size: 13px; }
   .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
 
-  .caps { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--line); gap: 1px; }
-  .cap { background: var(--bg); padding: 24px; display: grid; gap: 12px; align-content: start; }
-  .cap h3 { font-size: 13px; font-weight: 500; color: var(--accent); letter-spacing: 0.02em; }
-  .cap ul { display: flex; flex-wrap: wrap; gap: 6px 14px; color: var(--muted); font-size: 14.5px; }
 
   .xp { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
   .xp li { display: grid; grid-template-columns: 1fr auto; gap: 2px 24px; padding: 16px 0; border-bottom: 1px solid var(--line); }

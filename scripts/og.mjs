@@ -15,7 +15,7 @@ h1{font-size:76px;line-height:1.02;letter-spacing:-.035em;font-weight:680;margin
 p{font-family:M;color:#98a3ac;font-size:24px;margin-top:34px;position:relative}
 .bar{position:absolute;left:0;bottom:0;height:8px;width:100%;background:#3dd6c0}
 </style></head><body><div class="grid"></div><div class="logo">salehi<span>_</span></div>
-<h1>Principal Engineer.</h1><p>devops · sre · backend · networking</p><div class="bar"></div></body></html>`;
+<h1>Principal Engineer.</h1><p>ai · devops · sre · backend · networking</p><div class="bar"></div></body></html>`;
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 await page.setContent(html, { waitUntil: 'load' });
