@@ -12,7 +12,7 @@ interface Props {
   bare?: boolean;
 }
 const { title, description = site.description, bare = false } = Astro.props;
-const fullTitle = title ? `${title} · ${site.handle}` : `${site.handle} — ${site.role}`;
+const fullTitle = title ? `${title} · ${site.handle}` : `${site.handle} · ${site.role}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const og = new URL('/og.png', Astro.site);
 ---
