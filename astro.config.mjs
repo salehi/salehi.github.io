@@ -7,10 +7,7 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [sitemap()],
   devToolbar: { enabled: false },
+  // Old pages; everything now lives on the home page.
+  redirects: { '/cv': '/', '/projects': '/', '/writing': '/' },
   build: { inlineStylesheets: 'always' },
-  markdown: {
-    shikiConfig: {
-      themes: { light: 'github-light', dark: 'github-dark-dimmed' },
-    },
-  },
 });

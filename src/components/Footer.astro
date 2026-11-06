@@ -1,21 +1,22 @@
 ---
-import { site } from '../data/site';
+import { resume } from '../lib/resume';
 const year = new Date().getFullYear();
 ---
 <footer class="ftr">
   <div class="wrap row">
-    <p class="mono">© {year} salehi</p>
-    <ul>
-      <li><a href={site.links.github}>GitHub</a></li>
-      <li><a href={site.links.linkedin}>LinkedIn</a></li>
-      <li><a href={site.links.dockerhub}>Docker Hub</a></li>
-      <li><a href="/rss.xml">RSS</a></li>
-    </ul>
+    <p class="mono">© {year} {resume.name}</p>
+    <a href="#top" class="top">
+      Back to top
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
+    </a>
   </div>
 </footer>
 <style>
   .ftr { border-top: 1px solid var(--line); padding-block: 28px; font-size: 13.5px; color: var(--faint); }
   .row { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
-  ul { display: flex; gap: 18px; flex-wrap: wrap; }
-  a:hover { color: var(--text); }
+  .top { display: inline-flex; align-items: center; gap: 6px; }
+  .top svg { width: 14px; height: 14px; transition: transform .2s; }
+  .top:hover { color: var(--text); }
+  .top:hover svg { transform: translateY(-2px); }
+  @media print { .ftr { display: none; } }
 </style>

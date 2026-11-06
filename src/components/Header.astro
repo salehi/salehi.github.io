@@ -1,17 +1,15 @@
 ---
-import { getCollection } from 'astro:content';
-import { nav } from '../data/site';
-const hasPosts = (await getCollection('writing', (p) => !p.data.draft)).length > 0;
-const items = nav.filter((n) => !n.needsPosts || hasPosts);
-const path = Astro.url.pathname;
+import { resume } from '../lib/resume';
+const home = Astro.url.pathname === '/';
+const items = resume.sections.map((s) => ({ href: `${home ? '' : '/'}#${s.id}`, label: s.title }));
 ---
 <header class="hdr">
   <div class="wrap bar">
-    <a href="/" class="logo mono" aria-label="salehi, home">salehi<span class="caret">_</span></a>
+    <a href="/" class="logo mono" aria-label={`${resume.name}, home`}>salehi<span class="caret">_</span></a>
     <nav aria-label="Main">
       <ul>
         {items.map((n) => (
-          <li><a href={n.href} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a></li>
+          <li><a href={n.href}>{n.label}</a></li>
         ))}
       </ul>
       <button class="theme" type="button" aria-label="Toggle color theme" title="Toggle theme">
@@ -23,6 +21,7 @@ const path = Astro.url.pathname;
       </button>
     </nav>
   </div>
+  <div class="progress" aria-hidden="true"></div>
 </header>
 
 <script is:inline>
@@ -33,6 +32,19 @@ const path = Astro.url.pathname;
     root.dataset.theme = next;
     try { localStorage.setItem('theme', next); } catch (e) {}
   });
+  // Highlight the nav link of the section currently in view.
+  (() => {
+    const links = new Map([...document.querySelectorAll('.hdr nav a[href*="#"]')].map((a) => [a.hash.slice(1), a]));
+    const secs = [...links.keys()].map((id) => document.getElementById(id)).filter(Boolean);
+    if (!secs.length || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) if (e.isIntersecting) {
+        links.forEach((a) => a.removeAttribute('aria-current'));
+        links.get(e.target.id)?.setAttribute('aria-current', 'true');
+      }
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    secs.forEach((s) => io.observe(s));
+  })();
 </script>
 
 <style>
@@ -51,7 +63,16 @@ const path = Astro.url.pathname;
   nav ul { display: flex; gap: 2px; }
   nav a { display: block; padding: 6px 10px; border-radius: 8px; font-size: 14.5px; color: var(--muted); transition: color .15s, background .15s; }
   nav a:hover { color: var(--text); background: var(--bg-sunk); }
-  nav a[aria-current='page'] { color: var(--text); }
+  nav a[aria-current] { color: var(--text); background: var(--accent-soft); }
+  .progress {
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent);
+    transform-origin: 0 50%; transform: scaleX(0);
+  }
+  @supports (animation-timeline: scroll()) {
+    .progress { animation: grow linear both; animation-timeline: scroll(root); }
+    @keyframes grow { to { transform: scaleX(1); } }
+  }
+  @media print { .hdr { display: none; } }
   .theme { display: grid; place-items: center; width: 36px; height: 36px; margin-left: 4px; border-radius: 8px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
   .theme:hover { color: var(--text); border-color: var(--line-strong); }
   .theme svg { width: 17px; height: 17px; }
@@ -62,5 +83,8 @@ const path = Astro.url.pathname;
     :global(:root:not([data-theme='light'])) .sun { display: none; }
     :global(:root:not([data-theme='light'])) .moon { display: block; }
   }
-  @media (max-width: 420px) { nav a { padding: 6px 7px; font-size: 14px; } }
+  nav ul { overflow-x: auto; scrollbar-width: none; }
+  nav ul::-webkit-scrollbar { display: none; }
+  @media (max-width: 560px) { .logo { display: none; } .bar { justify-content: flex-end; } nav { width: 100%; justify-content: space-between; } nav a { padding: 6px 8px; font-size: 14px; } }
+  @media (max-width: 360px) { nav a { padding: 6px 5px; font-size: 13px; } }
 </style>

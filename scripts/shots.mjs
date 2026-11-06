@@ -3,7 +3,7 @@ import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 import { serve } from './serve.mjs';
 
-const routes = (process.env.ROUTES ?? '/,/projects/,/cv/,/writing/,/nope').split(',');
+const routes = (process.env.ROUTES ?? '/,/nope').split(',');
 const sizes = { mobile: { width: 390, height: 844 }, desktop: { width: 1440, height: 900 } };
 await mkdir('shots', { recursive: true });
 const srv = await serve();

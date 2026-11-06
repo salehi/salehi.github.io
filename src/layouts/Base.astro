@@ -4,15 +4,14 @@ import '@fontsource-variable/jetbrains-mono';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { site } from '../data/site';
+import { resume } from '../lib/resume';
 
 interface Props {
   title?: string;
-  description?: string;
-  bare?: boolean;
 }
-const { title, description = site.description, bare = false } = Astro.props;
-const fullTitle = title ? `${title} · ${site.handle}` : `${site.handle} · ${site.role}`;
+const { title } = Astro.props;
+const fullTitle = title ? `${title} · ${resume.name}` : resume.name;
+const description = resume.headline;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const og = new URL('/og.png', Astro.site);
 ---
@@ -26,11 +25,9 @@ const og = new URL('/og.png', Astro.site);
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <link rel="alternate" type="application/rss+xml" title="salehi — writing" href="/rss.xml" />
     <meta name="theme-color" content="#0a0d10" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#f6f6f3" media="(prefers-color-scheme: light)" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="salehi" />
+    <meta property="og:type" content="profile" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -43,12 +40,13 @@ const og = new URL('/og.png', Astro.site);
         const t = localStorage.getItem('theme');
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
       } catch (e) {}
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('js');
     </script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    {!bare && <Header />}
+    <Header />
     <main id="main"><slot /></main>
-    {!bare && <Footer />}
+    <Footer />
   </body>
 </html>
