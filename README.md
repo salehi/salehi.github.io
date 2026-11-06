@@ -10,7 +10,7 @@ Everything runs in Docker. The host only needs `docker`, `git` and `make`.
 make install   # npm ci in node:22-alpine
 make dev       # http://localhost:4321
 make build     # production build into dist/
-make pdf       # render /cv into dist/salehi-cv.pdf (Playwright image)
+make pdf       # optional: render /cv into a PDF (Playwright image); the site serves resume.pdf
 make shots     # screenshots (mobile/desktop, light/dark) into shots/
 make og        # regenerate public/og.png
 ```
@@ -20,7 +20,8 @@ make og        # regenerate public/og.png
 | What | Where |
 |---|---|
 | Favorite projects (order + descriptions) | `src/data/favorites.ts` |
-| Résumé (page + PDF) | `src/data/cv.ts` |
+| Résumé page | `src/data/cv.ts` (kept in sync with `resume.md`) |
+| Résumé PDF (download) | `resume.pdf`, copied to `/salehi-cv.pdf` on build |
 | Links, email, nav | `src/data/site.ts` |
 | Blog posts | `src/content/writing/*.md` (the Writing link appears once one exists) |
 

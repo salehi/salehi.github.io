@@ -16,6 +16,7 @@ dev:                ## dev server on http://localhost:4321
 	$(RUN) -it -p 4321:4321 $(NODE_IMG) npm run dev
 
 build:              ## production build into dist/ (set GITHUB_TOKEN for higher API limits)
+	cp resume.pdf public/salehi-cv.pdf
 	$(RUN) $(NODE_IMG) npm run build
 
 check:              ## type and template checks

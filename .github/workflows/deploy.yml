@@ -25,15 +25,13 @@ jobs:
           check-latest: true # Astro needs >=22.23.4; runner caches can lag behind
           cache: npm
       - run: npm ci
+      - name: Use resume.pdf as the downloadable CV
+        run: cp resume.pdf public/salehi-cv.pdf
       - name: Build
         run: npm run build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ASTRO_TELEMETRY_DISABLED: 1
-      - name: Render résumé PDF
-        run: |
-          npx playwright install --with-deps chromium
-          npm run pdf
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:
